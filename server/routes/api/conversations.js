@@ -46,6 +46,13 @@ router.get("/", async (req, res, next) => {
         },
       ],
     });
+    
+    conversations.sort((convo1,convo2) => {     
+      return (
+        new Date(convo2.messages[convo2.messages.length - 1].createdAt) - 
+        new Date(convo1.messages[convo1.messages.length - 1].createdAt)
+      );
+    });
 
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
