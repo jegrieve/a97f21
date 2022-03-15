@@ -86,7 +86,7 @@ export const updateMessageToReadInStore = (state, conversationId) => {
     if (conversationId === convo.id) {
       const convoCopy = { ...convo };
       convoCopy.unreadMessageCount = 0;
-      convoCopy.messages = convoCopy.map((message) => {
+      convoCopy.messages = convoCopy.messages.map((message) => {
         message.readStatus = true;
         return message;
       });
