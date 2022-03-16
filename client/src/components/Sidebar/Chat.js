@@ -28,6 +28,7 @@ const Chat = (props) => {
   useEffect(() => {
     if (
       activeConversation === otherUser.username &&
+      conversation.messages.length > 0 &&
       conversation.messages[conversation.messages.length - 1].readStatus ===
         false &&
       conversation.messages[conversation.messages.length - 1].senderId ===
