@@ -48,6 +48,16 @@ router.put("/", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
+    let conversation = await Conversation.findOne({
+      where: { id: req.body.conversationId },
+    });
+    if (
+      req.user.dataValues.id !== conversation.user1Id &&
+      req.user.dataValues.id !== conversation.user2Id
+    ) {
+      return res.sendStatus(403);
+    }
+
     const senderId = req.user.id;
     const { conversationId } = req.body;
 
