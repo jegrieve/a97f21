@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { connect } from "react-redux";
+import { updateDbMessageReadStatus } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,15 +15,28 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     "&:hover": {
-      cursor: "grab"
-    }
-  }
+      cursor: "grab",
+    },
+  },
 }));
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const { conversation, activeConversation } = props;
   const { otherUser } = conversation;
+
+  useEffect(() => {
+    if (
+      activeConversation === otherUser.username &&
+      conversation.messages.length > 0 &&
+      conversation.messages[conversation.messages.length - 1].readStatus ===
+        false &&
+      conversation.messages[conversation.messages.length - 1].senderId ===
+        otherUser.id
+    ) {
+      (async () => await props.updateDbMessageReadStatus(conversation.id))();
+    }
+  });
 
   const handleClick = async (conversation) => {
     await props.setActiveChat(conversation.otherUser.username);
@@ -45,7 +59,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
-    }
+    },
+    updateDbMessageReadStatus: (conversationId) => {
+      dispatch(updateDbMessageReadStatus({ conversationId }));
+    },
   };
 };
 
