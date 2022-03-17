@@ -127,10 +127,13 @@ export const updateDbMessageReadStatus = (body) => async (dispatch) => {
   try {
     const convoId = body.conversationId;
     if (convoId) {
-      const { data } = await axios.put("/api/messages", body);
-      dispatch(updateMessageToRead(convoId));
-      readMessage(convoId);
-      return data;
+      const data = await axios.put("/api/messages", body);
+      if (data.status === 204) {
+        dispatch(updateMessageToRead(convoId));
+        readMessage(convoId);
+      } else {
+        throw data.status;
+      }
     }
   } catch (error) {
     console.error(error);
